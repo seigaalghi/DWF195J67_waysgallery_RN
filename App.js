@@ -1,5 +1,11 @@
-import React, { useEffect } from 'react';
-import Landing from './src/screens/Landing';
+import React, { useEffect, useState } from 'react';
+import LandingTab from './src/tabs/LandingTab';
+import HomeTab from './src/tabs/HomeTab';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import setAuthToken from './src/redux/utility/setAuthToken';
+import AppLoading from 'expo-app-loading';
+import navigationTheme from './src/theme/navigationTheme';
+
 //React Native Elements
 import { ThemeProvider } from 'react-native-elements';
 
@@ -11,46 +17,37 @@ import { createStackNavigator } from '@react-navigation/stack';
 //Redux
 import { Provider } from 'react-redux';
 import store from './src/redux/store';
-import LandingTab from './src/tabs/LandingTab';
-import HomeTab from './src/tabs/HomeTab';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import setAuthToken from './src/redux/utility/setAuthToken';
 import { loadUser } from './src/redux/action/auth';
+import HomeLoading from './src/animations/HomeLoading';
 
 const Stack = createStackNavigator();
 
-if (AsyncStorage.getItem('token')) {
-  setAuthToken(AsyncStorage.getItem('token'));
-}
-
 export default function App() {
-  const message = store.getState((state) => state.alert);
+  const [isReady, setIsReady] = useState(false);
+  const [user, setUser] = useState({});
+  const { auth } = store.getState();
 
-  useEffect(() => {
-    store.dispatch(loadUser());
-  }, []);
+  const starter = async () => {
+    const token = await AsyncStorage.getItem('token');
 
-  useEffect(() => {
-    if (message.message) {
-      alert(message.message);
-    }
-  }, [message.message]);
+    setAuthToken(token);
+    await store.dispatch(loadUser());
+  };
+
+  if (!isReady) {
+    return (
+      <AppLoading
+        startAsync={starter}
+        onError={(error) => console.log(error)}
+        onFinish={() => setIsReady(true)}
+      />
+    );
+  }
+
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <ThemeProvider>
-          <Stack.Navigator>
-            <Stack.Screen
-              name='Landing'
-              component={Landing}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen name='Entry' component={LandingTab} />
-            <Stack.Screen name='Home' component={HomeTab} />
-          </Stack.Navigator>
-        </ThemeProvider>
+      <NavigationContainer theme={navigationTheme}>
+        <ThemeProvider>{auth.isAuthenticated ? <HomeTab /> : <LandingTab />}</ThemeProvider>
       </NavigationContainer>
     </Provider>
   );

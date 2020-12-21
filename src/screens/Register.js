@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Button, Input, Text, Icon } from 'react-native-elements';
-import styles from '../styles/styles';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-const Register = () => {
+const Register = ({ navigation: { navigate } }) => {
   const [reveal, setReveal] = useState(true);
   const initialValues = {
     email: '',
@@ -49,7 +48,6 @@ const Register = () => {
               value={values.email}
               errorMessage={touched.email ? errors.email : null}
             />
-
             <Input
               label='Password'
               labelStyle={styles.labelStyle}
@@ -62,6 +60,9 @@ const Register = () => {
               errorMessage={touched.password ? errors.password : null}
             />
             <Button title='Register' buttonStyle={styles.entrySubmit} onPress={handleSubmit} />
+            <Text style={styles.navigation} onPress={() => navigate('Login')}>
+              Already have an account? tap here
+            </Text>
           </View>
         )}
       </Formik>
@@ -70,3 +71,35 @@ const Register = () => {
 };
 
 export default Register;
+
+const styles = StyleSheet.create({
+  entryContainer: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+    height: '100%',
+  },
+  entryHeading: {
+    fontWeight: 'bold',
+    fontSize: 30,
+    color: 'black',
+    marginBottom: 20,
+  },
+  entrySubmit: {
+    backgroundColor: '#2fc4b2',
+  },
+  labelStyle: {
+    fontSize: 20,
+  },
+  labelStyle: {
+    fontSize: 20,
+    color: 'black',
+  },
+  navigation: {
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    marginTop: 30,
+    fontSize: 15,
+  },
+});

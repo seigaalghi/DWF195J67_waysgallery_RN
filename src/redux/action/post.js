@@ -1,10 +1,18 @@
-import { LOAD_POSTS, LOAD_POST, ADD_POST, LIKE_POST, DISLIKE_POST, COMMENT_POST, DELETE_COMMENT } from '../types';
+import {
+  LOAD_POSTS,
+  LOAD_POST,
+  ADD_POST,
+  LIKE_POST,
+  DISLIKE_POST,
+  COMMENT_POST,
+  DELETE_COMMENT,
+} from '../types';
 import axios from 'axios';
 import { setAlert, setUpload } from './alert';
 
 export const loadPost = (id) => async (dispatch) => {
   try {
-    const res = await axios.get(`/api/v1/post/${id}`);
+    const res = await axios.get(`https://seiga-waysgallery.herokuapp.com//api/v1/post/${id}`);
     dispatch({
       type: LOAD_POST,
       payload: res.data.data.post,
@@ -20,7 +28,7 @@ export const loadPost = (id) => async (dispatch) => {
 
 export const loadPosts = (limit) => async (dispatch) => {
   try {
-    const res = await axios.get(`/api/v1/posts/${limit}`);
+    const res = await axios.get(`https://seiga-waysgallery.herokuapp.com/api/v1/posts/${limit}`);
     dispatch({
       type: LOAD_POSTS,
       payload: { posts: res.data.data.posts.rows, count: res.data.data.posts.count },
@@ -42,7 +50,11 @@ export const loadFollowedPosts = (limit, data) => async (dispatch) => {
     },
   };
   try {
-    const res = await axios.post(`/api/v1/posts/${limit}`, body, config);
+    const res = await axios.post(
+      `https://seiga-waysgallery.herokuapp.com/api/v1/posts/${limit}`,
+      body,
+      config
+    );
     dispatch({
       type: LOAD_POSTS,
       payload: { posts: res.data.data.posts.rows, count: res.data.data.posts.count },
@@ -58,7 +70,9 @@ export const loadFollowedPosts = (limit, data) => async (dispatch) => {
 
 export const loadPostByUser = (limit, userId) => async (dispatch) => {
   try {
-    const res = await axios.get(`/api/v1/posts/${limit}/${userId}`);
+    const res = await axios.get(
+      `https://seiga-waysgallery.herokuapp.com/api/v1/posts/${limit}/${userId}`
+    );
     dispatch({
       type: LOAD_POSTS,
       payload: { posts: res.data.data.posts.rows, count: res.data.data.posts.count },
@@ -93,7 +107,11 @@ export const addPost = (data) => async (dispatch) => {
     },
   };
   try {
-    const res = await axios.post(`/api/v1/post`, formData, config);
+    const res = await axios.post(
+      `https://seiga-waysgallery.herokuapp.com/api/v1/post`,
+      formData,
+      config
+    );
 
     dispatch({
       type: ADD_POST,
@@ -111,7 +129,7 @@ export const addPost = (data) => async (dispatch) => {
 
 export const likePost = (id) => async (dispatch) => {
   try {
-    const res = await axios.post(`/api/v1/post/like/${id}`);
+    const res = await axios.post(`https://seiga-waysgallery.herokuapp.com/api/v1/post/like/${id}`);
     dispatch({
       type: LIKE_POST,
       payload: { like: res.data.data.like, id },
@@ -127,7 +145,7 @@ export const likePost = (id) => async (dispatch) => {
 
 export const dislikePost = (id, userId) => async (dispatch) => {
   try {
-    await axios.delete(`/api/v1/post/like/${id}`);
+    await axios.delete(`https://seiga-waysgallery.herokuapp.com/api/v1/post/like/${id}`);
     dispatch({
       type: DISLIKE_POST,
       payload: { id, userId },
@@ -149,7 +167,11 @@ export const addComment = (data, id) => async (dispatch) => {
   };
   const body = JSON.stringify(data);
   try {
-    const res = await axios.post(`/api/v1/post/comment/${id}`, body, config);
+    const res = await axios.post(
+      `https://seiga-waysgallery.herokuapp.com/api/v1/post/comment/${id}`,
+      body,
+      config
+    );
     dispatch({
       type: COMMENT_POST,
       payload: res.data.data.comment,
@@ -167,7 +189,7 @@ export const addComment = (data, id) => async (dispatch) => {
 
 export const removeComment = (id) => async (dispatch) => {
   try {
-    await axios.delete(`/api/v1/post/comment/${id}`);
+    await axios.delete(`https://seiga-waysgallery.herokuapp.com/api/v1/post/comment/${id}`);
     dispatch({
       type: DELETE_COMMENT,
       payload: id,
